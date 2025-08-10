@@ -28,12 +28,14 @@ function App() {
     });
 
     const initPuter = async () => {
-      if (window.puter && !window.puter.auth.isSignedIn()) {
+      if (window.puter && typeof window.puter.auth.isSignedIn === 'function' && !window.puter.auth.isSignedIn()) {
         try {
           await window.puter.auth.signIn();
           console.log('Puter sign-in successful.');
         } catch (error) {
-          console.error('Puter sign-in failed:', error);
+          // It's possible the user closes the sign-in popup, which can throw an error.
+          // We can safely ignore this error.
+          console.log('Puter sign-in process was not completed:', error);
         }
       }
     };

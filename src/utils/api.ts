@@ -1,3 +1,4 @@
 export const isPuterEndpoint = (modelName: string) => {
-  return modelName.startsWith('openrouter:');
+  // All models should go through Puter.js in this setup.
+  return true;
 };

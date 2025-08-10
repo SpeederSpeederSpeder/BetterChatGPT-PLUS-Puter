@@ -115,6 +115,19 @@ const CustomModelsManager = () => {
 
               <div className='space-y-1'>
                 <label className='block text-sm font-medium text-gray-700 dark:text-gray-200'>
+                  {t('customModels.contextLength') || ''}
+                </label>
+                <input
+                  type='number'
+                  placeholder='128000'
+                  value={contextLength}
+                  onChange={(e) => setContextLength(Number(e.target.value))}
+                  className='w-full text-black dark:text-white px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+                />
+              </div>
+
+              <div className='space-y-1'>
+                <label className='block text-sm font-medium text-gray-700 dark:text-gray-200'>
                   {t('customModels.streamSupported') || ''}
                 </label>
                 <div className='flex items-center gap-2'>

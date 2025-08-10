@@ -182,6 +182,10 @@ export const MaxTokenSlider = ({
 }) => {
   const { t } = useTranslation('model');
   const inputRef = useRef<HTMLInputElement>(null);
+  const customModels = useStore((state) => state.customModels);
+  const customModel = customModels.find((m) => m.id === _model);
+
+  const max = customModel ? customModel.context_length : modelMaxToken[_model];
 
   useEffect(() => {
     inputRef &&
@@ -202,7 +206,7 @@ export const MaxTokenSlider = ({
           _setMaxToken(Number(e.target.value));
         }}
         min={0}
-        max={modelMaxToken[_model]}
+        max={max}
         step={1}
         className='w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer'
       />
