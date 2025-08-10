@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import PopupModal from '@components/PopupModal';
 import { ConfigInterface, ImageDetail } from '@type/chat';
 import Select from 'react-select';
-import { modelOptions, modelMaxToken } from '@constants/modelLoader';
+import { modelOptions, modelMaxToken, modelDisplayNames } from '@constants/modelLoader';
 import { ModelOptions } from '@utils/modelReader';
 import useStore from '@store/store';
 
@@ -111,7 +111,7 @@ export const ModelSelector = ({
     const customModel = customModels.find(m => m.id === model);
     return {
       value: model,
-      label: isCustom ? `${customModel?.name} ${t('customModels.customLabel', { ns: 'model' })}` : model,
+      label: isCustom ? `${customModel?.name} ${t('customModels.customLabel', { ns: 'model' })}` : modelDisplayNames[model],
     };
   });
 
@@ -155,9 +155,9 @@ export const ModelSelector = ({
       <Select
         value={{
           value: _model,
-          label: customModels.some(m => m.id === _model) 
-            ? `${customModels.find(m => m.id === _model)?.name} ${t('customModels.customLabel', { ns: 'model' })}` 
-            : _model,
+          label: customModels.some(m => m.id === _model)
+            ? `${customModels.find(m => m.id === _model)?.name} ${t('customModels.customLabel', { ns: 'model' })}`
+            : modelDisplayNames[_model],
         }}
         onChange={(selectedOption) =>
           _setModel(selectedOption?.value as ModelOptions)

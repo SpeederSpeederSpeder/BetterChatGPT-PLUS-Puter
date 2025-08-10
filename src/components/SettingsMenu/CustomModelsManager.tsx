@@ -29,7 +29,7 @@ const CustomModelsManager = () => {
     e.preventDefault();
     if (newModelId && newModelName) {
       addCustomModel({
-        id: newModelId,
+        id: newModelId.startsWith('openrouter:') ? newModelId : `openrouter:${newModelId}`,
         name: newModelName,
         architecture: {
           modality: newModelModality,
