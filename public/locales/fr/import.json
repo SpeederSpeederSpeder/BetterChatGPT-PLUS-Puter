@@ -1,0 +1,16 @@
+{
+    "notifications": {
+      "invalidOpenAIDataFormat": "Format de données OpenAI invalide",
+      "invalidChatsDataFormat": "Format de données des discussions invalide",
+      "invalidFormatForVersion": "Format invalide pour la version spécifiée",
+      "quotaExceeded": "Quota de stockage dépassé",
+      "textSavedOnly": "Seul le texte a été sauvegardé",
+      "successfulImport": "Importation réussie !",
+      "nothingImported": "Aucune donnée n'a été importée",
+      "unrecognisedDataFormat": "Format de données non reconnu. Les formats pris en charge sont : exportation BetterGPT, exportation OpenAI, OpenAI Playground (JSON)",
+      "chatsImported": "{{imported}} discussions ont été importées sur {{total}}.",
+      "unsupportedModels": "Modèle(s) non pris en charge : {{models}} ne sont pas disponibles. Ajoutez-les dans Paramètres → Modèles personnalisés avant d'importer."
+    },
+    "reduceMessagesSuccess": "{{count}} messages ont été réduits.",
+    "partialImportMessages": "{{total}} messages attendus mais {{count}} trouvés"
+  }

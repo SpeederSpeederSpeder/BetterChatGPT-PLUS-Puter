@@ -1,0 +1,9 @@
+{
+  "migration": {
+    "confirmTitle": "Confirmer la migration",
+    "confirmMessage": "Si vous rencontrez des problèmes car vos messages sont dans un ancien format, l'exécution de cette migration les mettra à jour au dernier format. Cela peut aider à résoudre les problèmes et à améliorer votre expérience. Voulez-vous continuer ?",
+    "resetVersionButton": "Réinitialiser la version et migrer",
+    "resetVersionDescription": "Cela réinitialisera la version à 8 et déclenchera les migrations.",
+    "noPersistedState": "Aucune donnée enregistrée trouvée. Impossible de réinitialiser la version."
+  }
+}
