@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Puter.js Test</title>
+    <script src="https://js.puter.com/v2/"></script>
+</head>
+<body>
+    <h1>Puter.js Test Page</h1>
+    <p>Check the console for output.</p>
+    <script>
+        async function testPuter() {
+            try {
+                const isSignedIn = puter.auth.isSignedIn();
+                console.log('Puter.js loaded. Signed in:', isSignedIn);
+                document.body.innerHTML += '<p>Puter.js loaded successfully! Signed in: ' + isSignedIn + '</p>';
+                
+                if (!isSignedIn) {
+                    console.log('Attempting to sign in...');
+                    await puter.auth.signIn();
+                    console.log('Sign in successful.');
+                    document.body.innerHTML += '<p>Sign in successful!</p>';
+                }
+
+                const user = await puter.auth.getUser();
+                console.log('User:', user);
+                document.body.innerHTML += '<p>User: ' + JSON.stringify(user) + '</p>';
+
+            } catch (error) {
+                console.error('Puter test failed:', error);
+                document.body.innerHTML += '<p style="color: red;">Puter test failed: ' + error.message + '</p>';
+            }
+        }
+        // signIn must be called from a user action, so let's add a button.
+        const button = document.createElement('button');
+        button.textContent = 'Run Puter.js Test';
+        button.onclick = testPuter;
+        document.body.appendChild(button);
+    </script>
+</body>
+</html>

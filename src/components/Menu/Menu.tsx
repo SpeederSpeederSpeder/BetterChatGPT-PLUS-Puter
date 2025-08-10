@@ -4,7 +4,7 @@ import useStore from '@store/store';
 import NewChat from './NewChat';
 import NewFolder from './NewFolder';
 import ChatHistoryList from './ChatHistoryList';
-import MenuOptions from './MenuOptions';
+import MenuOptions from './MenuOptions/MenuOptions';
 
 import CrossIcon2 from '@icon/CrossIcon2';
 import DownArrow from '@icon/DownArrow';

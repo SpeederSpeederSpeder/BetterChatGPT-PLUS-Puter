@@ -1,6 +1,6 @@
 import { ModelCost } from '@type/chat';
 import useStore from '@store/store';
-import i18next from 'i18next';
+import { CustomModel } from '@store/custom-models-slice';
 
 interface ModelData {
   id: string;
@@ -42,9 +42,6 @@ export const loadModels = async (): Promise<{
   modelStreamSupport: { [key: string]: boolean };
   modelDisplayNames: { [key: string]: string };
 }> => {
-  const response = await fetch(modelsJsonUrl);
-  const modelsJson: ModelsJson = await response.json();
-
   const modelOptions: string[] = [];
   const modelMaxToken: { [key: string]: number } = {};
   const modelCost: ModelCost = {};
@@ -52,129 +49,39 @@ export const loadModels = async (): Promise<{
   const modelStreamSupport: { [key: string]: boolean } = {};
   const modelDisplayNames: { [key: string]: string } = {};
 
-  // Add custom models first
-  const customModels = useStore.getState().customModels;
-  customModels.forEach((model) => {
-    const modelId = model.id;
-    modelOptions.push(modelId);
-    modelMaxToken[modelId] = model.context_length;
-    modelCost[modelId] = {
-      prompt: { price: parseFloat(model.pricing.prompt), unit: 1 },
-      completion: { price: parseFloat(model.pricing.completion), unit: 1 },
-      image: { price: parseFloat(model.pricing.image), unit: 1 },
-    };
-
-    modelTypes[modelId] = model.architecture.modality.includes('image') ? 'image' : 'text';
-    modelStreamSupport[modelId] = model.is_stream_supported;
-    console.log("init model:", model.name);
-    console.log("init model with stream support:", model.is_stream_supported);
-    modelDisplayNames[modelId] = `${model.name} ${i18next.t('customModels.customLabel', { ns: 'model' })}`;
-  });
-
-  // Prepend specific models
   const specificModels = [
-    {
-      id: 'gpt-4-0125-preview',
-      context_length: 128000,
-      pricing: {
-        prompt: '0.00001',
-        completion: '0.00003',
-        image: '0.01445',
-        request: '0',
-      },
-      type: 'text',
-      is_stream_supported: true,
-    },
-    {
-      id: 'gpt-4-turbo-2024-04-09',
-      context_length: 128000,
-      pricing: {
-        prompt: '0.00001',
-        completion: '0.00003',
-        image: '0.01445',
-        request: '0',
-      },
-      type: 'text',
-      is_stream_supported: false,
-    },
-    {
-      architecture: {
-        instruct_type: null,
-        modality: "text->text",
-        tokenizer: "Other"
-      },
-      context_length: 200000,
-      created: 1738351721,
-      description: "OpenAI o3-mini is a cost-efficient language model optimized for STEM reasoning tasks, particularly excelling in science, mathematics, and coding. The model features three adjustable reasoning effort levels and supports key developer capabilities including function calling, structured outputs, and streaming, though it does not include vision processing capabilities.\n\nThe model demonstrates significant improvements over its predecessor, with expert testers preferring its responses 56% of the time and noting a 39% reduction in major errors on complex questions. With medium reasoning effort settings, o3-mini matches the performance of the larger o1 model on challenging reasoning evaluations like AIME and GPQA, while maintaining lower latency and cost.",
-      id: "o3-mini-low",
-      name: "OpenAI: o3 Mini (Low)",
-      per_request_limits: null,
-      pricing: {
-        completion: "0.0000044",
-        image: "0",
-        prompt: "0.0000011",
-        request: "0"
-      },
-      top_provider: {
-        context_length: 200000,
-        is_moderated: true,
-        max_completion_tokens: 100000
-      },
-      is_stream_supported: false,
-      type: 'text',
-    },
-    {
-      architecture: {
-        instruct_type: null,
-        modality: "text->text",
-        tokenizer: "Other"
-      },
-      context_length: 200000,
-      created: 1738351721,
-      description: "OpenAI o3-mini is a cost-efficient language model optimized for STEM reasoning tasks, particularly excelling in science, mathematics, and coding. The model features three adjustable reasoning effort levels and supports key developer capabilities including function calling, structured outputs, and streaming, though it does not include vision processing capabilities.\n\nThe model demonstrates significant improvements over its predecessor, with expert testers preferring its responses 56% of the time and noting a 39% reduction in major errors on complex questions. With medium reasoning effort settings, o3-mini matches the performance of the larger o1 model on challenging reasoning evaluations like AIME and GPQA, while maintaining lower latency and cost.",
-      id: "o3-mini-medium",
-      name: "OpenAI: o3 Mini (Medium)",
-      per_request_limits: null,
-      pricing: {
-        completion: "0.0000044",
-        image: "0",
-        prompt: "0.0000011",
-        request: "0"
-      },
-      top_provider: {
-        context_length: 200000,
-        is_moderated: true,
-        max_completion_tokens: 100000
-      },
-      is_stream_supported: false,
-      type: 'text',
-    },
-    {
-      architecture: {
-        instruct_type: null,
-        modality: "text->text",
-        tokenizer: "Other"
-      },
-      context_length: 200000,
-      created: 1738351721,
-      description: "OpenAI o3-mini is a cost-efficient language model optimized for STEM reasoning tasks, particularly excelling in science, mathematics, and coding. The model features three adjustable reasoning effort levels and supports key developer capabilities including function calling, structured outputs, and streaming, though it does not include vision processing capabilities.\n\nThe model demonstrates significant improvements over its predecessor, with expert testers preferring its responses 56% of the time and noting a 39% reduction in major errors on complex questions. With medium reasoning effort settings, o3-mini matches the performance of the larger o1 model on challenging reasoning evaluations like AIME and GPQA, while maintaining lower latency and cost.",
-      id: "o3-mini-high",
-      name: "OpenAI: o3 Mini (High)",
-      per_request_limits: null,
-      pricing: {
-        completion: "0.0000044",
-        image: "0",
-        prompt: "0.0000011",
-        request: "0"
-      },
-      top_provider: {
-        context_length: 200000,
-        is_moderated: true,
-        max_completion_tokens: 100000
-      },
-      is_stream_supported: false,
-      type: 'text',
-    }
+    { id: 'gpt-4o-mini', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'image', is_stream_supported: true, name: 'GPT-4o-mini' },
+    { id: 'gpt-4o', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'image', is_stream_supported: true, name: 'GPT-4o' },
+    { id: 'o1', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'O1' },
+    { id: 'o1-mini', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'O1 Mini' },
+    { id: 'o1-pro', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'O1 Pro' },
+    { id: 'o3', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'O3' },
+    { id: 'o3-mini', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'O3 Mini' },
+    { id: 'o4-mini', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'O4 Mini' },
+    { id: 'gpt-5', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'GPT-5' },
+    { id: 'gpt-5-mini', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'GPT-5 Mini' },
+    { id: 'gpt-5-nano', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'GPT-5 Nano' },
+    { id: 'gpt-5-chat-latest', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'GPT-5 Chat Latest' },
+    { id: 'gpt-4.1', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'GPT-4.1' },
+    { id: 'gpt-4.1-mini', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'GPT-4.1 Mini' },
+    { id: 'gpt-4.1-nano', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'GPT-4.1 Nano' },
+    { id: 'gpt-4.5-preview', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'GPT-4.5 Preview' },
+    { id: 'claude-sonnet-4', context_length: 200000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'image', is_stream_supported: true, name: 'Claude Sonnet 4' },
+    { id: 'claude-opus-4', context_length: 200000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'image', is_stream_supported: true, name: 'Claude Opus 4' },
+    { id: 'claude-3-7-sonnet', context_length: 200000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'image', is_stream_supported: true, name: 'Claude 3.7 Sonnet' },
+    { id: 'claude-3-5-sonnet', context_length: 200000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'image', is_stream_supported: true, name: 'Claude 3.5 Sonnet' },
+    { id: 'deepseek-chat', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'Deepseek Chat' },
+    { id: 'deepseek-reasoner', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'Deepseek Reasoner' },
+    { id: 'gemini-2.0-flash', context_length: 1048576, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'image', is_stream_supported: true, name: 'Gemini 2.0 Flash' },
+    { id: 'gemini-1.5-flash', context_length: 1048576, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'image', is_stream_supported: true, name: 'Gemini 1.5 Flash' },
+    { id: 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo', context_length: 131072, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'Llama 3.1 8B' },
+    { id: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo', context_length: 131072, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'Llama 3.1 70B' },
+    { id: 'meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo', context_length: 131072, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'Llama 3.1 405B' },
+    { id: 'mistral-large-latest', context_length: 32768, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'Mistral Large' },
+    { id: 'pixtral-large-latest', context_length: 32768, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'image', is_stream_supported: true, name: 'Pixtral Large' },
+    { id: 'codestral-latest', context_length: 32768, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'Codestral' },
+    { id: 'google/gemma-2-27b-it', context_length: 8192, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'Gemma 2 27B' },
+    { id: 'grok-beta', context_length: 8192, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'Grok Beta' },
   ];
 
   specificModels.forEach((model) => {
@@ -187,83 +94,7 @@ export const loadModels = async (): Promise<{
     };
     modelTypes[model.id] = model.type;
     modelStreamSupport[model.id] = model.is_stream_supported;
-    modelDisplayNames[model.id] = model.id;
-  });
-
-  modelsJson.data.forEach((model) => {
-    const modelId = model.id.split('/').pop() as string;
-    modelOptions.push(modelId);
-    modelMaxToken[modelId] = model.context_length;
-    modelCost[modelId] = {
-      prompt: { price: parseFloat(model.pricing.prompt), unit: 1 },
-      completion: { price: parseFloat(model.pricing.completion), unit: 1 },
-      image: { price: 0, unit: 1 }, // default for no image models
-    };
-
-    // TODO: Remove workaround once openrouter supports it
-    if (modelId.includes('o1-')) {
-      model.is_stream_supported = false;
-    } else {
-      model.is_stream_supported = true;
-    }
-
-    // Detect image capabilities
-    var inputModality = model.architecture.modality.split('->');
-    
-    if (parseFloat(model.pricing.image) > 0 || (inputModality && inputModality.length >= 1 && inputModality[0].includes('image'))) {
-      modelTypes[modelId] = 'image';
-      modelCost[modelId].image = {
-        price: parseFloat(model.pricing.image),
-        unit: 1,
-      };
-    } else {
-      modelTypes[modelId] = 'text';
-    }
-    modelStreamSupport[modelId] = model.is_stream_supported;
-    modelDisplayNames[modelId] = modelId;
-  });
-
-  // Sort modelOptions to prioritize gpt-4.5 models at the top, followed by custom models, gpt-4o models, o1 models, and then other OpenAI models
-  modelOptions.sort((a, b) => {
-    const isCustomA = customModels.some(m => m.id === a);
-    const isCustomB = customModels.some(m => m.id === b);
-    const isGpt45A = a.includes('gpt-4.');
-    const isGpt45B = b.includes('gpt-4.');
-    const isGpt4oA = a.startsWith('gpt-4o');
-    const isGpt4oB = b.startsWith('gpt-4o');
-    const isO3A = a.startsWith('o3-');
-    const isO3B = b.startsWith('o3-');
-    const isO1A = a.startsWith('o1-');
-    const isO1B = b.startsWith('o1-');
-    const isOpenAIA = a.startsWith('gpt-');
-    const isOpenAIB = b.startsWith('gpt-');
-
-    // Prioritize gpt-4.5 models
-    if (isGpt45A && !isGpt45B) return -1;
-    if (!isGpt45A && isGpt45B) return 1;
-
-    // Then prioritize custom models
-    if (isCustomA && !isCustomB) return -1;
-    if (!isCustomA && isCustomB) return 1;
-
-    // If both are custom or neither, prioritize gpt-4o models
-    if (isGpt4oA && !isGpt4oB) return -1;
-    if (!isGpt4oA && isGpt4oB) return 1;
-
-    // If both are gpt-4o or neither, prioritize o3 models
-    if (isO3A && !isO3B) return -1;
-    if (!isO3A && isO3B) return 1;
-
-    // If both are o3 or neither, prioritize o1 models
-    if (isO1A && !isO1B) return -1;
-    if (!isO1A && isO1B) return 1;
-
-    // If both are o1 or neither, prioritize other OpenAI models
-    if (isOpenAIA && !isOpenAIB) return -1;
-    if (!isOpenAIA && isOpenAIB) return 1;
-
-    // If both are the same type or neither, maintain original order
-    return 0;
+    modelDisplayNames[model.id] = model.name || model.id;
   });
 
   return {

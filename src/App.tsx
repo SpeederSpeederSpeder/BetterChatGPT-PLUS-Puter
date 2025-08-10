@@ -26,6 +26,19 @@ function App() {
     i18n.on('languageChanged', (lng) => {
       document.documentElement.lang = lng;
     });
+
+    const initPuter = async () => {
+      if (window.puter && !window.puter.auth.isSignedIn()) {
+        try {
+          await window.puter.auth.signIn();
+          console.log('Puter sign-in successful.');
+        } catch (error) {
+          console.error('Puter sign-in failed:', error);
+        }
+      }
+    };
+
+    initPuter();
   }, []);
 
   useEffect(() => {
