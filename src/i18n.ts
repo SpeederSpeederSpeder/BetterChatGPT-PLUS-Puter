@@ -20,6 +20,11 @@ i18n
     fallbackLng: ['en', 'fr'],
     ns: namespace,
     defaultNS: 'main',
+    detection: {
+      order: ['localStorage', 'navigator'],
+      caches: ['localStorage'],
+    },
+    load: 'languageOnly',
   });
 
 export default i18n;

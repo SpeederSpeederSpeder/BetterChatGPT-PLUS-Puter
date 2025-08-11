@@ -232,7 +232,6 @@ const useSubmit = () => {
         }
     } catch (e: unknown) {
       const err = (e as Error).message;
-      console.log(err);
       setError(err);
     }
     setGenerating(false);
