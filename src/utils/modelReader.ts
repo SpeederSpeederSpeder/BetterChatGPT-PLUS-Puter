@@ -82,6 +82,7 @@ export const loadModels = async (): Promise<{
     { id: 'codestral-latest', context_length: 32768, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'Codestral' },
     { id: 'google/gemma-2-27b-it', context_length: 8192, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'Gemma 2 27B' },
     { id: 'grok-beta', context_length: 8192, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'Grok Beta' },
+    { id: 'openrouter/z-ai/glm-4.5v', context_length: 128000, pricing: { prompt: '0', completion: '0', image: '0', request: '0' }, type: 'text', is_stream_supported: true, name: 'GLM 4.5v' },
   ];
 
   specificModels.forEach((model) => {

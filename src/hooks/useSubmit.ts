@@ -97,11 +97,6 @@ const useSubmit = () => {
         modelStreamSupport[chats[currentChatIndex].config.model];
         const { model, temperature, max_tokens } = chats[currentChatIndex].config;
         const supportsStream = modelStreamSupport[model];
-        console.log('[useSubmit] Model streaming support:', {
-          model,
-          supportsStream,
-          isStreamSupported
-        });
       let data;
       let stream;
       if (chats[currentChatIndex].messages.length === 0)
@@ -131,7 +126,6 @@ const useSubmit = () => {
           while (reading && useStore.getState().generating) {
             const { done, value } = await reader.read();
             const decodedValue = new TextDecoder().decode(value);
-            console.log('[useSubmit] Received raw stream value:', decodedValue);
             const result = parseEventSource(
               partial + decodedValue
             );
@@ -154,7 +148,7 @@ const useSubmit = () => {
                 return output;
               }, '');
               
-              console.log('[useSubmit] Processed resultString:', resultString);
+              
 
               const updatedChats: ChatInterface[] = JSON.parse(
                 JSON.stringify(useStore.getState().chats)
